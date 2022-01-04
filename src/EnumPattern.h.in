@@ -5,7 +5,7 @@
 #include <string>
 #include <format>
 
-namespace DBF {
+%ENUM_NAMESPACE_START%
 
 class %ENUM_NAME% {
 public:
@@ -39,13 +39,13 @@ private:
     %ENUM_NAME%Impl m_Value;
 };
 
-} // namespace DBF
+%ENUM_NAMESPACE_END%
 
 template<class CharT>
-struct std::formatter<DBF::%ENUM_NAME%, CharT>
+struct std::formatter<%ENUM_NAMESPACE%%ENUM_NAME%, CharT>
     : std::formatter<std::string_view, CharT> {
     template<class FormatContext>
-    auto format(DBF::%ENUM_NAME% value, FormatContext& fc)
+    auto format(%ENUM_NAMESPACE%%ENUM_NAME% value, FormatContext& fc)
     {
         return std::formatter<std::string_view, CharT>::format(
             value.ToString(), fc);
@@ -53,8 +53,8 @@ struct std::formatter<DBF::%ENUM_NAME%, CharT>
 };
 
 template <>
-struct std::hash<DBF::%ENUM_NAME%> {
-    size_t operator()(const DBF::%ENUM_NAME%& value) const {
+struct std::hash<%ENUM_NAMESPACE%%ENUM_NAME%> {
+    size_t operator()(const %ENUM_NAMESPACE%%ENUM_NAME%& value) const {
         return static_cast<size_t>(value.m_Value);
     }
 };
