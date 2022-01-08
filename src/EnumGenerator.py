@@ -34,11 +34,11 @@ def main():
     enumNamespace = ''
     enumNamespaceStart = ''
     enumNamespaceEnd = ''
-    if "namespace" in enumJson:
-        enumNamespace = enumJson['namespace']
-        enumNamespaceStart = "namespace " + enumNamespace + " {"
-        enumNamespaceEnd = "} // namespace " + enumNamespace
-        enumNamespace = enumNamespace + "::"
+    if 'namespace' in enumJson:
+        enumNamespacePrefix = enumJson['namespace']
+        enumNamespaceStart = "namespace " + enumNamespacePrefix + " {"
+        enumNamespaceEnd = "} // namespace " + enumNamespacePrefix
+        enumNamespace = enumNamespacePrefix + "::"
     enumSize = str(len(enumValuesArray))
     enumValues = ''
     enumValuesStrings = ''
