@@ -7,10 +7,17 @@
 # appropriate header and source files for the given enums that other targets
 # can link to.
 # The created target will be created as: <top_level_project>::<enum_name>.
+#
+# For convenience, the CMake variable <project_name>_GENERATED_ENUMS will be
+# set to the list of generated targets.
 # -----
 ################################################################################
 
 cmake_minimum_required(VERSION 3.17)
+
+if (NOT Python3_EXECUTABLE)
+    Find_Package(Python3 COMPONENTS Interpreter REQUIRED)
+endif()
 
 function(Generate_Enum)
 
@@ -24,25 +31,29 @@ foreach(ENUM_JSON ${ARGN})
     get_filename_component(FILENAME ${ENUM_JSON} NAME_WE)
     set(HEADER_OUT ${GENERATED_SOURCES_FOLDER}/${FILENAME}.h)
     set(CPP_OUT ${GENERATED_SOURCES_FOLDER}/${FILENAME}.cpp)
-    list(APPEND GENERATED_SOURCES ${HEADER_OUT} ${CPP_OUT})
     add_custom_command(
         OUTPUT ${HEADER_OUT} ${CPP_OUT}
         DEPENDS ${ENUM_JSON} ${GENERATOR} ${GENERATOR_HEADERS} ${GENERATOR_SOURCES}
-        COMMAND python ${GENERATOR} ${ENUM_JSON} ${GENERATED_SOURCES_FOLDER}
+        COMMAND ${Python3_EXECUTABLE} ${GENERATOR} ${ENUM_JSON} ${GENERATED_SOURCES_FOLDER}
         COMMENT "Generating ${HEADER_OUT} and ${CPP_OUT} from ${ENUM_JSON}")
-    add_library(${FILENAME} ${GENERATED_SOURCES})
+    add_library(${FILENAME} ${HEADER_OUT} ${CPP_OUT})
     set_target_properties(${FILENAME} PROPERTIES PUBLIC_HEADER ${HEADER_OUT})
     target_include_directories(
         ${FILENAME} PUBLIC
         $<BUILD_INTERFACE:${GENERATED_SOURCES_FOLDER}>
         $<INSTALL_INTERFACE:include>
     )
+    set_property(TARGET ${FILENAME} PROPERTY CXX_STANDARD 20)
     add_library(${CMAKE_PROJECT_NAME}::${FILENAME} ALIAS ${FILENAME})
+    message(STATUS "Generated ${CMAKE_PROJECT_NAME}::${FILENAME}...")
+    list(APPEND "${CMAKE_PROJECT_NAME}_GENERATED_ENUMS" ${CMAKE_PROJECT_NAME}::${FILENAME})
+    set(${CMAKE_PROJECT_NAME}_GENERATED_ENUMS ${${CMAKE_PROJECT_NAME}_GENERATED_ENUMS} PARENT_SCOPE)
+    include(GNUInstallDirs)
     install(TARGETS ${FILENAME}
-        LIBRARY DESTINATION bin
-        RUNTIME DESTINATION bin
-        ARCHIVE DESTINATION lib
-        PUBLIC_HEADER DESTINATION include
+        LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
 
 endforeach(ENUM_JSON)

@@ -31,6 +31,14 @@ def main():
 
     enumName = os.path.basename(jsonFile).rsplit('.', 1)[0]
     enumValuesArray = enumJson['values']
+    enumNamespace = ''
+    enumNamespaceStart = ''
+    enumNamespaceEnd = ''
+    if 'namespace' in enumJson:
+        enumNamespacePrefix = enumJson['namespace']
+        enumNamespaceStart = "namespace " + enumNamespacePrefix + " {"
+        enumNamespaceEnd = "} // namespace " + enumNamespacePrefix
+        enumNamespace = enumNamespacePrefix + "::"
     enumSize = str(len(enumValuesArray))
     enumValues = ''
     enumValuesStrings = ''
@@ -46,7 +54,10 @@ def main():
         '%ENUM_SIZE%': enumSize,
         '%ENUM_VALUES%': enumValues,
         '%ENUM_VALUES_STRINGS%': enumValuesStrings,
-        '%ENUM_VALUES_MAP%': enumValuesMap}
+        '%ENUM_VALUES_MAP%': enumValuesMap,
+        '%ENUM_NAMESPACE_START%': enumNamespaceStart,
+        '%ENUM_NAMESPACE%': enumNamespace,
+        '%ENUM_NAMESPACE_END%': enumNamespaceEnd}
 
     headerPatternFile = os.path.join(scriptFolder, 'EnumPattern.h.in')
     cppPatternFile = os.path.join(scriptFolder, 'EnumPattern.cpp.in')
