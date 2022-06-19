@@ -12,7 +12,7 @@ public:
     enum %ENUM_NAME%Impl {%ENUM_VALUES%};
 
 public:
-    constexpr static int EnumSize();
+    constexpr static int EnumSize() { return %ENUM_SIZE%; }
     static void Foreach(const std::function<void(%ENUM_NAME%Impl)> cb);
 
 public:
@@ -32,7 +32,11 @@ public:
     friend std::hash<%ENUM_NAME%>;
 
 private:
-    constexpr static std::string_view %ENUM_NAME%ImplToString(%ENUM_NAME%Impl value);
+    constexpr static std::string_view %ENUM_NAME%ImplToString(%ENUM_NAME%Impl value)
+    {
+        constexpr std::string_view toStrTable[EnumSize()] = {%ENUM_VALUES_STRINGS%};
+        return toStrTable[static_cast<int>(value)];
+    }
     static %ENUM_NAME%Impl StringTo%ENUM_NAME%Impl(const std::string_view& valueStr);
 
 private:

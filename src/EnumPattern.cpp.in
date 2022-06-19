@@ -6,11 +6,6 @@
 
 %ENUM_NAMESPACE_START%
 
-constexpr int %ENUM_NAME%::EnumSize()
-{
-    return %ENUM_SIZE%;
-}
-
 void %ENUM_NAME%::Foreach(const std::function<void(%ENUM_NAME%Impl)> cb)
 {
     for (int i = 0; i < EnumSize(); i++) {
@@ -60,15 +55,6 @@ const %ENUM_NAME%& %ENUM_NAME%::operator=(const char* valueStr)
     m_Value = StringTo%ENUM_NAME%Impl(valueStr);
 
     return *this;
-}
-
-constexpr std::string_view %ENUM_NAME%::%ENUM_NAME%ImplToString(
-    %ENUM_NAME%Impl value)
-{
-    constexpr std::string_view toStrTable[EnumSize()] =
-        {%ENUM_VALUES_STRINGS%};
-
-    return toStrTable[static_cast<int>(value)];
 }
 
 %ENUM_NAME%::%ENUM_NAME%Impl %ENUM_NAME%::StringTo%ENUM_NAME%Impl(
