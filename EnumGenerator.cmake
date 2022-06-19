@@ -7,6 +7,9 @@
 # appropriate header and source files for the given enums that other targets
 # can link to.
 # The created target will be created as: <top_level_project>::<enum_name>.
+#
+# For convenience, the CMake variable <project_name>_GENERATED_ENUMS will be
+# set to the list of generated targets.
 # -----
 ################################################################################
 
@@ -28,7 +31,6 @@ foreach(ENUM_JSON ${ARGN})
     get_filename_component(FILENAME ${ENUM_JSON} NAME_WE)
     set(HEADER_OUT ${GENERATED_SOURCES_FOLDER}/${FILENAME}.h)
     set(CPP_OUT ${GENERATED_SOURCES_FOLDER}/${FILENAME}.cpp)
-    list(APPEND GENERATED_SOURCES ${HEADER_OUT} ${CPP_OUT})
     add_custom_command(
         OUTPUT ${HEADER_OUT} ${CPP_OUT}
         DEPENDS ${ENUM_JSON} ${GENERATOR} ${GENERATOR_HEADERS} ${GENERATOR_SOURCES}
@@ -43,6 +45,9 @@ foreach(ENUM_JSON ${ARGN})
     )
     set_property(TARGET ${FILENAME} PROPERTY CXX_STANDARD 20)
     add_library(${CMAKE_PROJECT_NAME}::${FILENAME} ALIAS ${FILENAME})
+    message(STATUS "Generated ${CMAKE_PROJECT_NAME}::${FILENAME}...")
+    list(APPEND "${CMAKE_PROJECT_NAME}_GENERATED_ENUMS" ${CMAKE_PROJECT_NAME}::${FILENAME})
+    set(${CMAKE_PROJECT_NAME}_GENERATED_ENUMS ${${CMAKE_PROJECT_NAME}_GENERATED_ENUMS} PARENT_SCOPE)
     include(GNUInstallDirs)
     install(TARGETS ${FILENAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
