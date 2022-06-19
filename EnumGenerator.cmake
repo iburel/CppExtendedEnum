@@ -18,9 +18,9 @@ endif()
 
 function(Generate_Enum)
 
-set(GENERATOR ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/EnumGenerator.py)
-set(GENERATOR_HEADERS ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/EnumPattern.h.in)
-set(GENERATOR_SOURCES ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/EnumPattern.cpp.in)
+set(GENERATOR ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/EnumGenerator.py)
+set(GENERATOR_HEADERS ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/EnumPattern.h.in)
+set(GENERATOR_SOURCES ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/src/EnumPattern.cpp.in)
 set(GENERATED_SOURCES_FOLDER "${CMAKE_CURRENT_BINARY_DIR}/generated-src")
 
 message(STATUS "Generating enum files...")
